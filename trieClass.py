@@ -1,7 +1,7 @@
-#LastName:
-#FirstName:
-#Email:
-#Comments:
+#LastName:  Trieu
+#FirstName: Thomas
+#Email:     thomas.trieu@colorado.edu
+#Comments:  CSCI-3104 Fall 2016
 
 from __future__ import print_function
 import sys
@@ -22,20 +22,27 @@ class MyTrieNode:
 
 
     def addWord(self,w):
-        assert(len(w) > 0)
-
-        # YOUR CODE HERE
-        # If you want to create helper/auxiliary functions, please do so.
-        
-        return
+        if (w == ''):
+            self.isWordEnd = True
+            self.count += 1
+            return
+        if (w[0] not in self.next):
+            self.next[w[0]] = MyTrieNode(False)
+        self.next[w[0]].addWord(w[1:])
 
     def lookupWord(self,w):
         # Return frequency of occurrence of the word w in the trie
         # returns a number for the frequency and 0 if the word w does not occur.
-
-        # YOUR CODE HERE
         
-        return 0 # TODO: change this line, please
+        # If not on last node, call lookupWord on next node with w[1:].
+        if (len(w) > 0):
+            # Checks if self.next contains next prefix.
+            if (self.next.get(w[0], False)):
+                return self.next[w[0]].lookupWord(w[1:])
+            else:
+                return 0
+        else:
+            return self.count
     
 
     def autoComplete(self,w):
@@ -43,7 +50,11 @@ class MyTrieNode:
         #Returns a list of pairs (s,j) denoting that
         #         word s occurs with frequency j
 
-        #YOUR CODE HERE
+        if (len(w) > 0):
+            return self.next[w[0]].autoComplete(w[1:])
+        elif (not self.next)
+            return ('', self.count)
+        
         
         return [('Walter',1),('Mitty',2),('Went',3),('To',4),('Greenland',2)] #TODO: change this line, please
     
