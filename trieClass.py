@@ -58,13 +58,13 @@ class MyTrieNode:
         #           a.  If next key:node pair doesn't exist, returns empty list
         #   2.  The node is a 'leaf' (i.e. has empty dict), signaling the end
         #       of descent and the return of a tuple with node's count.
-        #   3.  The node is in set of potential suffixes.
+        #   3.  The node is in set of potential suffixes and has children.
         #           a.  'Collects' results of recursive calls on children
         #           b.  Returns results, prepended by own tuple if is word end
         # 'Building' of the strings in each tuple is handled on the ascent. That is,
         # after the results of a call are received, each tuple's string is prepended
         # by the appropriate key. This is handled in cases 1 and 3: case 1 prepends
-        # all results with the same key, or letter; case 2 prepends results based on
+        # all results with the same key, or letter; case 3 prepends results based on
         # which key:node pair they returned from.
         # This method reads and replaces tuples at most c*n times, where n is the number
         # of elements in the final return list and where c is the length of the longest
