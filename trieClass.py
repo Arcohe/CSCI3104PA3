@@ -49,14 +49,33 @@ class MyTrieNode:
         #Returns possible list of autocompletions of the word w
         #Returns a list of pairs (s,j) denoting that
         #         word s occurs with frequency j
+        
+        # Grossly unoptimized, but oh well.
 
         if (len(w) > 0):
-            return self.next[w[0]].autoComplete(w[1:])
-        elif (not self.next)
-            return ('', self.count)
-        
-        
-        return [('Walter',1),('Mitty',2),('Went',3),('To',4),('Greenland',2)] #TODO: change this line, please
+            if (w[0] not in self.next):
+                return []
+            Lst = self.next[w[0]].autoComplete(w[1:])
+            if (not Lst):
+                return []
+            for n in range(len(Lst)):
+                Lst[n] = (w[0] + Lst[n][0], Lst[n][1])
+            return Lst
+        elif (not self.next):
+            return [('', self.count)]
+        else:
+            wordLst = []
+            if (self.isWordEnd):
+                wordLst.append(('', self.count))
+            for key in self.next:
+                tempLst = self.next[key].autoComplete(w[1:])
+                # Prepends key to self.next to appropriate children words.
+                for i in range(len(tempLst)):
+                    tempLst[i] = (key + tempLst[i][0], tempLst[i][1])
+                wordLst = wordLst + tempLst
+            return wordLst
+            
+        #return [('Walter',1),('Mitty',2),('Went',3),('To',4),('Greenland',2)] #TODO: change this line, please
     
     
             
