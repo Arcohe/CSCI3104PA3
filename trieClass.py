@@ -20,7 +20,9 @@ class MyTrieNode:
         self.count = 0 # frequency count
         self.next = {} # Dictionary mappng each character from a-z to the child node
 
-
+    # Adds words to trie through recursion. Method 'consumes' the first letter of the
+    # input string; creates a key/node pair, if not already present in current node's
+    # dict; sets flag and increments count, if entire word is added.
     def addWord(self,w):
         if (w == ''):
             self.isWordEnd = True
@@ -30,13 +32,12 @@ class MyTrieNode:
             self.next[w[0]] = MyTrieNode(False)
         self.next[w[0]].addWord(w[1:])
 
+
+    # Uses recursion, though not necessary for implementation, and likely not optimal.
     def lookupWord(self,w):
         # Return frequency of occurrence of the word w in the trie
         # returns a number for the frequency and 0 if the word w does not occur.
-        
-        # If not on last node, call lookupWord on next node with w[1:].
         if (len(w) > 0):
-            # Checks if self.next contains next prefix.
             if (self.next.get(w[0], False)):
                 return self.next[w[0]].lookupWord(w[1:])
             else:
@@ -44,14 +45,35 @@ class MyTrieNode:
         else:
             return self.count
     
-
+    
+    # 
     def autoComplete(self,w):
         #Returns possible list of autocompletions of the word w
         #Returns a list of pairs (s,j) denoting that
         #         word s occurs with frequency j
-        
-        # Grossly unoptimized, but oh well.
 
+        # Implemented as recursive function with three cases:
+        #   1.  Word passed in the initial call is not yet 'consumed', prompting
+        #       search for next key:node pair
+        #           a.  If next key:node pair doesn't exist, returns empty list
+        #   2.  The node is a 'leaf' (i.e. has empty dict), signaling the end
+        #       of descent and the return of a tuple with node's count.
+        #   3.  The node is in set of potential suffixes.
+        #           a.  'Collects' results of recursive calls on children
+        #           b.  Returns results, prepended by own tuple if is word end
+        # 'Building' of the strings in each tuple is handled on the ascent. That is,
+        # after the results of a call are received, each tuple's string is prepended
+        # by the appropriate key. This is handled in cases 1 and 3: case 1 prepends
+        # all results with the same key, or letter; case 2 prepends results based on
+        # which key:node pair they returned from.
+        # This method reads and replaces tuples at most c*n times, where n is the number
+        # of elements in the final return list and where c is the length of the longest
+        # valid autocomplete word. A different approach may have been taken if a helper
+        # function (maybe to keep track of current prefix) were implemented.
+        # 
+        # In retrospect, it may have been more efficient to return lists sans tuples
+        # and 'tuplify' once recursion was finished, to avoid reading and changing tuples
+        # repeatedly.
         if (len(w) > 0):
             if (w[0] not in self.next):
                 return []
@@ -68,16 +90,11 @@ class MyTrieNode:
             if (self.isWordEnd):
                 wordLst.append(('', self.count))
             for key in self.next:
-                tempLst = self.next[key].autoComplete(w[1:])
-                # Prepends key to self.next to appropriate children words.
+                tempLst = self.next[key].autoComplete(w[1:])    # w[1:] where w is '' still yields ''
                 for i in range(len(tempLst)):
                     tempLst[i] = (key + tempLst[i][0], tempLst[i][1])
                 wordLst = wordLst + tempLst
             return wordLst
-            
-        #return [('Walter',1),('Mitty',2),('Went',3),('To',4),('Greenland',2)] #TODO: change this line, please
-    
-    
             
 
 if (__name__ == '__main__'):
